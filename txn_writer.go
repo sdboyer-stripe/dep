@@ -561,11 +561,6 @@ func (dw *DeltaWriter) Write(path string, sm gps.SourceManager, examples bool, l
 	}
 
 	// Write out the lock, now that it's fully updated with digests.
-	//
-	// This is OK to do even if -vendor-only, as the way the DeltaWriter is
-	// constructed means that the only changes that could happen here are
-	// pruneopts (which are definitely fine) or input imports (which are less
-	// fine, but this is enough of an edge case that we can be lazy for now.)
 	l, err := dw.lock.MarshalTOML()
 	if err != nil {
 		return errors.Wrap(err, "failed to marshal lock to TOML")
@@ -680,7 +675,7 @@ func (dw *DeltaWriter) PrintPreparedActions(output *log.Logger, verbose bool) er
 		if err != nil {
 			return errors.Wrap(err, "ensure DryRun cannot serialize lock")
 		}
-		output.Printf("Would have written the following %s: (hash digests may be incorrect):\n%s\n", LockName, string(l))
+		output.Printf("Would have written the following %s (hash digests may be incorrect):\n%s\n", LockName, string(l))
 	} else {
 		output.Printf("Would have written %s.\n", LockName)
 	}
